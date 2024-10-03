@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+
+<style>
+	.axil-banner-cat-counter .category-list-wrapper div {
+		width: 20% !important;
+		padding: 3rem !important;
+	}
+</style>
+
+{% block start %}
+
+<!-- Main contents
+	================================================ -->
+
+<div class="fluid-post-wrapper p-t-xs-15 p-t-sm-30">
+	<div class="container-fluid p-l-md-30 p-r-md-30">
+		<div class="row">
+			<div class="col-xl-4 col-lg-6">
+				<div id="news-carousel" class="axil-content owl-carousel axil-post-carousel" data-owl-items="1"
+					data-owl-loop="true" data-owl-autoplay="true" data-owl-dots="false" data-owl-nav="true"
+					data-owl-margin="0" data-owl-animate-in="fadeIn" data-owl-animate-out="fadeOut">
+					<!-- Carousel items will be dynamically inserted here -->
+				</div>
+			</div>
+
+			<div class="col-xl-8 col-lg-6">
+				<div class="y-scroll-container" data-x-scroll="false">
+					<div class="row gutter-40" id="news-container">
+						<!-- News items will be dynamically inserted here -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End of .row -->
+	</div>
+	<!-- End of .container-fluid -->
+</div>
+<!-- End of .fluid-post-wrapper -->
+
+<div class="random-posts section-gap-bottom bg-grey-light-three">
+	<div class="axil-banner-cat-counter">
+		<div class="container">
+			<div class="axil-content">
+				<div id="rushan" class="owl-carousel category-list-wrapper">
+					{% for category in categories %}
+					<div class="category-list perfect-square" style="height: 220px;">
+						<a href="#" class="list-inner"
+							style="background-image: url('{{ category.image.url }}'); background-size: cover;">
+							<div class="post-info-wrapper overlay">
+								<div class="counter-inner"><span class="counter">{{ category.new_set.count }}</span>+
+								</div>
+								<h4 class="cat-title">{{ category.name }}</h4>
+							</div>
+							<!-- End of .counter-wrapper -->
+						</a>
+					</div>
+					<!-- End of .category-list -->
+					{% endfor %}
+				</div>
+				<!-- End of .owl-carousel -->
+
+				<!-- Optional Custom Navigation Buttons -->
+				<div class="custom-nav">
+					<button class="custom-owl-prev">Prev</button>
+					<button class="custom-owl-next">Next</button>
+				</div>
+			</div>
+
+			<!-- End of .axil-content -->
+		</div>
+		<!-- End of .container -->
+	</div>
+	<!-- End of .axil-banner-cat-counter -->
+
+</div>
+
+<section class="section-gap section-gap-top__with-text top-stories bg-grey-light-three">
+	<div class="container">
+		<div class="section-title m-b-xs-40">
+			<h2 class="axil-title">Top Stories of the week</h2>
+			<a href="/top-stories/" class="btn-link">All Top Stories</a>
+		</div>
+		<div class="row" id="topWeekNewContainer">
+			<!-- Fetched news items will be inserted here dynamically -->
+		</div>
+	</div>
+</section>
+
+<!-- End of .TopWeekNew -->
+
+<section class="section-gap section-gap-top__with-text trending-stories">
+	<div class="container">
+		<div class="section-title m-b-xs-40">
+			<h2 class="axil-title">Trending Stories</h2>
+			<a href="/trending-news/" class="btn-link">ALL TRENDING STORIES</a>
+		</div>
+		<div id="trendingNewsContainer" class="row">
+			<!-- News articles will be dynamically inserted here -->
+		</div>
+	</div>
+</section>
+
+<!-- End of .trending-stories -->
+
+	<section class="axil-video-posts section-gap section-gap-top__with-text bg-grey-dark-one">
+		<div class="container">
+			<div class="section-title title-white m-b-xs-40">
+				<h2 class="axil-title">Most Popular E Paper</h2>
+				<a href="/e-papers/" class="btn-link ml-auto">All E Papers</a>
+			</div>
+			<!-- End of .section-title -->
+	
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="axil-img-container flex-height-container video-container__type-2 m-b-xs-30">
+						{% if epaper|length > 0 %}
+						<a href="{{ epaper.0.pdf.url }}" class="d-block h-100" target="_blank">
+							{% load static %}
+							<img class="w-100" src="{% static 'images/gt-epaper-daily.jpg' %}" alt="ePaper PDF">
+							<div class="grad-overlay grad-overlay__transparent"></div>
+						</a>
+						<div class="media post-block grad-overlay__transparent position-absolute">
+							<div class="media-body media-body__big">
+								<div class="axil-media-bottom mt-auto">
+									<div class="post-cat-group m-b-xs-10">
+										<a href="#" class="post-cat cat-btn btn-big bg-color-green-three text-uppercase">e Paper</a>
+									</div>
+									<h3 class="axil-post-title hover-line">
+										<a href="{{ epaper.0.pdf.url }}" target="_blank">{{ epaper.0.title }}</a>
+									</h3>
+									<div class="post-metas">
+										<ul class="list-inline">
+											<li>By Gujarat Today</li>
+											<li><i class="dot">.</i>{{ epaper.0.uploaded_at|date:"F d, Y" }}</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+	
+				<div class="col-lg-6">
+					<div class="axil-content">
+						{% for document in epaper|slice:"1:4" %}
+						<div class="media post-block top-story-post-block post-block__on-dark-bg m-b-xs-30">
+							<a href="{{ document.pdf.url }}" class="align-self-center" target="_blank">
+								<img class="m-r-xs-30" src="{% static 'images/gt-epaper-daily.jpg' %}" alt="ePaper PDF">
+							</a>
+							<div class="media-body">
+								<div class="post-cat-group m-b-xs-10">
+									<a href="#" class="post-cat cat-btn btn-big bg-color-green-three text-uppercase">e Paper</a>
+								</div>
+								<h3 class="axil-post-title hover-line">
+									<a href="{{ document.pdf.url }}" target="_blank">{{ document.title }}</a>
+								</h3>
+								<div class="post-metas">
+									<ul class="list-inline">
+										<li>By Gujarat Today</li>
+										<li><i class="dot">.</i>{{ document.uploaded_at|date:"F d, Y" }}</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+				<!-- End of .col-lg-6 -->
+			</div>
+			<!-- End of .row -->
+		</div>
+		<!-- End of .container -->
+	</section>
+
+		
+<!-- End of E-Paper Daily -->
+
+<section class="section-gap section-gap-top__with-text trending-stories">
+	<div class="container">
+		<div class="section-title m-b-xs-40">
+			<h2 class="axil-title">Popular News</h2>
+		</div>
+		<div class="row" id="popular-news-container">
+			{% for news in news_list %}
+			<div class="col-lg-6 news-item">
+				<div class="media post-block m-b-xs-30">
+					<a href="{% url 'news_detail' news.id %}" class="align-self-center">
+						<img class="m-r-xs-30" src="{{ news.image.url }}" alt="{{ news.title }}">
+					</a>
+					<div class="media-body">
+						<div class="post-cat-group m-b-xs-10">
+							<a href="" class="post-cat cat-btn bg-color-blue-grey-one">{{ news.category.name }}</a>
+						</div>
+						<h3 class="axil-post-title hover-line hover-line">
+							<a href="{% url 'news_detail' news.id %}">{{ news.title }}</a>
+						</h3>
+						<div class="post-metas">
+							<ul class="list-inline">
+								<li>By <a href="#">{{ news.author }}</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+
+		{% if news_list.has_next %}
+		<div class="text-center mt-4">
+			<button id="load-more-btn" class="btn btn-primary" data-next-page="{{ news_list.next_page_number }}">Load
+				More</button>
+		</div>
+		{% endif %}
+	</div>
+</section>
+<!-- End of .Popular-posts -->
+
+<!-- End of  .newsletter-widget -->
+
+<div class="under-construction-banner">
+	<div class="container">
+		<div class="row">
+			<div class="col-xl-5">
+				<div class="under-construction-inner-content">
+					<div class="newsletter-icon mb-4">
+						<i class="feather icon-send"></i>
+					</div>
+					<!-- End of .brand-logo-container -->
+					<div class="axil-title">
+						<h1 class="h1 m-0">Subscribe To Our Weekly Newsletter</h1>
+					</div>
+					<div class="newsletter-content">
+						<div class="text-left">
+							<h2 class="h5 m-b-xs-10">Are You Interested?</h2>
+							<p class="m-b-xs-20">Be the first to know when we launch.
+								<br>New Updates & Notifications
+							</p>
+						</div>
+						<!-- End of .section-title -->
+						<div class="subscription-form-wrapper">
+							<form method="post" action="{% url 'subscribe' %}" class="subscription-form row no-gutters">
+								{% csrf_token %}
+								<div class="form-group m-b-xs-20 col-auto">
+									<label for="subscription-email">Enter Email Address</label>
+									<input type="email" name="subscription-email" id="subscription-email" required>
+								</div>
+								<div class="m-b-xs-0 col-auto">
+									<button type="submit" class="btn btn-primary">SUBSCRIBE</button>
+								</div>
+							</form>
+							<!-- End of .subscription-form -->
+						</div>
+						<!-- End of .subscription-form-wrapper -->
+
+						<div class="contact-social-share m-t-xs-20">
+							<div class="axil-social-title h5">Follow Us</div>
+							<ul class="social-share social-share__with-bg">
+								<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+								<li><a href="#"><i class="fab fa-twitter"></i></a></li>
+								<li><a href="#"><i class="fab fa-behance"></i></a></li>
+								<li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End of .col-lg-8 -->
+		</div>
+		<!-- End of .row -->
+	</div>
+	<!-- End of .container -->
+</div>
+
+<!-- End of .section-gap -->
+<script>
+	$(document).ready(function () {
+		var owl = $('#rushan').owlCarousel({
+			loop: true,
+			margin: 10,
+			nav: false, // Disable default navigation
+			items: 5, // Show four items at a time
+			slideBy: 4, // Slide by four items
+			// autoplay: false,
+			// autoplayTimeout: 3000,
+			// autoplayHoverPause: true
+		});
+
+		// Custom navigation buttons functionality
+		$('.custom-owl-prev').click(function () {
+			owl.trigger('prev.owl.carousel', [300]); // Optional speed parameter (300 ms)
+		});
+
+		$('.custom-owl-next').click(function () {
+			owl.trigger('next.owl.carousel', [300]); // Optional speed parameter (300 ms)
+		});
+	});
+</script>
+
+{% endblock %}
