@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import NavbarLink, SiteLogo, Category, New, EpaperDaily, Lokhitmovement, TopNew, Feedback, Contact,Subscription
+from .models import NavbarLink, SiteLogo, Category, New, EpaperDaily, TopNew, Feedback, Contact,Subscription,Lokhitmovement
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 

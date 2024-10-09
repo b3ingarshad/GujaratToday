@@ -1,35 +1,92 @@
 {% extends 'base.html' %}
 
 {% block start %}
-{% if news_list %}
-<section class="banner banner__default bg-grey-light-three"></section>
+
+<div class="breadcrumb-wrapper">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Search</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="banner banner__default bg-grey-light-three">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-12">
                 <div class="post-title-wrapper">
-                    <h2 class="m-b-xs-0 axil-post-title hover-line">Search Results for "{{ query }}"</h2>
+                    <h2 class="m-b-xs-0 axil-post-title hover-line">Search : "{{ query }}"</h2>
                 </div>
-                <!-- End of .post-title-wrapper -->
             </div>
-            <!-- End of .col-lg-8 -->
         </div>
     </div>
-    <!-- End of .container -->
 </section>
 
-    <ul>
-    {% for news in news_list %}
-        <li>
-            <a href="{% url 'news_detail' news.id %}">
-                <h3>{{ news.title }}</h3>
-            </a>
-            <p>{{ news.description }}</p>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No results found for "{{ query }}".</p>
-{% endif %}
+<section class="section-gap section-gap-top__with-text search-stories">
+    <div class="container">
+        <div id="searchContainer" class="row">
+            <!-- News results will be inserted here -->
+        </div>
+    </div>
+</section>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchContainer = document.getElementById('searchContainer');
+
+        // Clear existing content
+        searchContainer.innerHTML = '';
+
+        // Parse the JSON data passed from the Django view
+        const news_results = {{ news_json|safe }};  // Use the 'safe' filter to allow HTML rendering
+
+        // Check if there are no results
+        if (news_results.length === 0) {
+            searchContainer.innerHTML = `
+                <div class="col-lg-12">
+                    <p>No results found for your search query.</p>
+                </div>
+            `;
+        } else {
+            // Loop through each news result
+            news_results.forEach(result => {
+                let articleHTML = `
+                    <div class="col-lg-4">
+                        <div class="axil-img-container m-b-xs-30">
+                            <a href="/news/${result.id}" class="d-block">
+                                <img src="${result.image || '/static/images/default_image.png'}" alt="${result.title}" class="w-100">
+                                <div class="grad-overlay"></div>
+                            </a>
+                            <div class="media post-block position-absolute">
+                                <div class="media-body">
+                                    <div class="post-cat-group m-b-xs-10">
+                                        <a href="#" class="post-cat cat-btn " style="background-color: ${result.category_color};">
+                                            ${result.category}
+                                        </a>
+                                    </div>
+                                    <div class="axil-media-bottom">
+                                        <h3 class="axil-post-title hover-line">
+                                            <a href="/news/${result.id}">${result.title}</a>
+                                        </h3>
+                                        <div class="post-metas">
+                                            <ul class="list-inline">
+                                                <li>By <a href="#" class="post-author">${result.author}</a></li>
+                                                <li><i class="dot">.</i>${result.date}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                searchContainer.innerHTML += articleHTML;
+            });
+        }
+    });
+</script>
 
 {% endblock %}

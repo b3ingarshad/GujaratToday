@@ -12,6 +12,8 @@ class NavbarLink(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='category_images/', default='category_images/default_image.jpg')
+    color = models.CharField(max_length=20, default='#000000', blank=True)
+    category_url = models.CharField(max_length=100)
     def __str__(self):
         return self.name
 
@@ -20,7 +22,7 @@ class New(models.Model):
     date = models.DateField()
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=100)
-    description = models.TextField()
+    description = RichTextField(config_name='default')
     image = models.ImageField(upload_to='news_images/')
     is_trending = models.BooleanField(default=False)
     class Meta:

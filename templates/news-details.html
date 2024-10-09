@@ -9,9 +9,9 @@
 		<div class="container">
 			<nav aria-label="breadcrumb">
 				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a href="#">Page Name</a></li>
-					<li class="breadcrumb-item"><a href="#">Categories</a></li>
-					<li class="breadcrumb-item active" aria-current="page">Post Name</li>
+					<li class="breadcrumb-item"><a href="#">Home</a></li>
+					<li class="breadcrumb-item"><a href="#">{{news.category}}</a></li>
+					<li class="breadcrumb-item active" aria-current="page">{{news.title}}</li>
 				</ol>
 				<!-- End of .breadcrumb -->
 			</nav>
@@ -27,17 +27,19 @@
 				<div class="col-lg-6">
 					<div class="post-title-wrapper">
 						<div class="btn-group">
-							<a href="#" class="cat-btn bg-color-blue-one">{{news.category}}</a>
+							<a href="#" class="cat-btn "
+								style="background-color: {{news.category.color}};">{{news.category}}</a>
 						</div>
 
 						<h2 class="m-t-xs-20 m-b-xs-0 axil-post-title hover-line">{{ news.title }}
 						</h2>
 						<div class="post-metas banner-post-metas m-t-xs-20">
 							<ul class="list-inline">
-								<li><a href="#" class="post-author post-author-with-img"><img
-											src="assets/images/author/01.png" alt="author">{{news.author}}</a></li>
-								<li><a href="#"><i class="feather icon-activity"></i>5k Views</a></li>
-								<li><a href="#"><i class="feather icon-share-2"></i>230 Shares</a></li>
+								<li><a href="#" class="post-author post-author-with-img">
+										{% load static %}
+										<img src="{% static 'images/gt-author.jpg' %}" alt="author">{{news.author}}</a>
+								</li>
+								<li>{{news.date|date:"M d, Y"}}</li>
 							</ul>
 						</div>
 						<!-- End of .post-metas -->
@@ -66,10 +68,20 @@
 							<div class="single-blog-wrapper">
 								<div class="post-details__social-share mt-2">
 									<ul class="social-share social-share__with-bg social-share__vertical">
-										<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-										<li><a href="#"><i class="fab fa-twitter"></i></a></li>
-										<li><a href="#"><i class="fab fa-behance"></i></a></li>
-										<li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+										<li><a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}"
+												target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+										<li><a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ news.title|urlencode }}"
+												target="_blank"><i class="fab fa-twitter"></i></a></li>
+										<li><a href="https://pinterest.com/pin/create/button/?url={{ request.build_absolute_uri|urlencode }}&media={{ news.image.url|urlencode }}&description={{ news.title|urlencode }}"
+												target="_blank"><i class="fab fa-pinterest"></i></a></li>
+										<li><a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}"
+												target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
+										<li><a href="https://api.whatsapp.com/send?text={{ news.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}"
+												target="_blank"><i class="fab fa-whatsapp"></i></a></li>
+										<li><a href="mailto:?subject={{ news.title|urlencode }}&body=Check%20this%20out:%20{{ request.build_absolute_uri|urlencode }}"
+												target="_blank"><i class="fas fa-envelope"></i></a></li>
+
+
 									</ul>
 									<!-- End of .social-share__no-bg -->
 								</div>
@@ -77,41 +89,15 @@
 
 								<p>{{ news.description|safe }}</p>
 
-
-								<blockquote>
-									<p>
-										If you’ve been waiting for an invitation, this calligraphy is it.
-										Commissioned
-										by
-										Facebook, this is a hand-lettered design for a poster. Quote is Facebook
-										Building 8
-										VP’s
-										Regina Dugan—and mine.
-									</p>
-								</blockquote>
 						</article>
 						<!-- End of .post-details -->
 
-						<div class="post-shares m-t-xs-60">
-							<div class="title">SHARE:</div>
-							<ul class="social-share social-share__rectangular">
-								<li><a href="#" class="btn bg-color-twitch"><i class="fab fa-twitch"></i>
-										1K+</a>
-								</li>
-								<li><a href="#" class="btn bg-color-facebook"><i class="fab fa-facebook-f"></i>
-										1K+</a>
-								</li>
-								<li><a href="#" class="btn bg-color-twitter"><i class="fab fa-twitter"></i>1000+</a>
-								</li>
-								<li><a href="#" class="btn bg-color-linkedin"><i class="fab fa-linkedin-in"></i>1M+</a>
-								</li>
-							</ul>
-						</div>
+
 						<!-- End of .post-shares -->
 
 						<hr class="m-t-xs-5 m-b-xs-40">
 
-						
+
 
 						<div class="comment-box">
 							<h2>Leave A Reply</h2>
@@ -122,39 +108,40 @@
 						<form method="POST" action="{% url 'feedback' %}" class="comment-form row m-b-xs-60">
 							{% csrf_token %}
 							<div class="col-12">
-								<div class="form-group comment-message-field">
+								<div class="form-group form-group-small comment-message-field">
 									<label for="comment-message">Comment</label>
 									<textarea name="comment_message" id="comment-message" rows="6" required></textarea>
 								</div>
 							</div>
-						
+
 							<div class="col-md-4">
-								<div class="form-group">
+								<div class="form-group form-group-small">
 									<label for="name">Name</label>
 									<input type="text" name="name" id="name" required>
 								</div>
 							</div>
-						
+
 							<div class="col-md-4">
-								<div class="form-group">
+								<div class="form-group form-group-small">
 									<label for="email">Email</label>
 									<input type="text" name="email" id="email" required>
 								</div>
 							</div>
-						
+
 							<div class="col-md-4">
-								<div class="form-group">
+								<div class="form-group form-group-small">
 									<label for="mobile_number">Mobile Number</label>
 									<input type="text" name="mobile_number" id="mobile_number" required>
 								</div>
 							</div>
-						
+
 							<div class="col-12">
-								<button class="btn btn-primary w-100 text-uppercase" type="submit" style="border-radius: 5px;">POST FEEBACK</button>
+								<button class="btn btn-primary btn-small w-100 text-uppercase" type="submit"
+									style="border-radius: 5px;">POST FEEBACK</button>
 							</div>
 						</form>
 
-						<div class="post-navigation-wrapper row  m-b-xs-60">
+						<!-- <div class="post-navigation-wrapper row  m-b-xs-60">
 							<div class="post-navigation col-lg-6">
 								<div class="post-nav-content">
 									<a href="#" class="prev-post">
@@ -171,7 +158,7 @@
 									<h3><a href="#">Tips For Choosing The Perfect Gloss For Your Lips</a></h3>
 								</div>
 							</div>
-						</div>
+						</div> -->
 						<!-- End of .post-navigation -->
 					</main>
 					<!-- End of main -->
@@ -187,111 +174,40 @@
 	</div>
 	<!-- End of .post-single-wrapper -->
 
-	<section class="related-post p-b-xs-30">
+	<section class="related-post m-t-xs-10 p-b-xs-30">
 		<div class="container">
 			<div class="section-title m-b-xs-40">
-				<h2 class="axil-title">Food &amp; Drink</h2>
-				<a href="#" class="btn-link ml-auto">All FOOD &amp; DRINK</a>
+				<h2 class="axil-title">Related Posts</h2>
+				<a href="#" class="btn-link ml-auto">All {{ news.category }}</a>
 			</div>
-			<!-- End of .section-title -->
 
 			<div class="grid-wrapper">
 				<div class="row">
+					{% if related_news %}
+					{% for related in related_news %}
 					<div class="col-lg-3 col-md-4">
 						<div class="content-block m-b-xs-30">
-							<a href="post-format-standard.html">
-								<img src="assets/images/related-post/related-post-1.jpg" alt="abstruct image"
-									class="img-fluid">
+							<a href="{% url 'news_detail' related.id %}">
+								<img src="{{ related.image.url }}" alt="{{ related.title }}" class="img-fluid">
 								<div class="grad-overlay"></div>
 							</a>
 							<div class="media-caption">
 								<div class="caption-content">
-									<h3 class="axil-post-title hover-line hover-line"><a
-											href="post-format-standard.html">Barbecue Party Tips For A Truly Amazing
-											Event</a></h3>
-									<div class="caption-meta">
-										By <a href="#">Martin Lambert</a>
-									</div>
+									<h3 class="axil-post-title hover-line hover-line">
+										<a href="{% url 'news_detail' related.id %}">{{ related.title }}</a>
+									</h3>
+									<div class="caption-meta">By <a href="#">{{ related.author }}</a></div>
 								</div>
-								<!-- End of .content-inner -->
 							</div>
 						</div>
-						<!-- End of .content-block -->
 					</div>
-					<!-- End of .col-lg-3 -->
-					<div class="col-lg-3 col-md-4">
-						<div class="content-block m-b-xs-30">
-							<a href="post-format-standard.html">
-								<img src="assets/images/related-post/related-post-2.jpg" alt="abstruct image"
-									class="img-fluid">
-								<div class="grad-overlay"></div>
-							</a>
-							<div class="media-caption">
-								<div class="caption-content">
-									<h3 class="axil-post-title hover-line hover-line"><a
-											href="post-format-standard.html">Grilling Tips For The Dog Days Of
-											Summer</a></h3>
-									<div class="caption-meta">
-										By <a href="#">Angu Tamba
-
-										</a>
-									</div>
-								</div>
-								<!-- End of .content-inner -->
-							</div>
-						</div>
-						<!-- End of .content-block -->
-					</div>
-					<!-- End of .col-lg-3 -->
-					<div class="col-lg-3 col-md-4">
-						<div class="content-block m-b-xs-30">
-							<a href="post-format-standard.html">
-								<img src="assets/images/related-post/related-post-3.jpg" alt="abstruct image"
-									class="img-fluid">
-								<div class="grad-overlay"></div>
-							</a>
-							<div class="media-caption">
-								<div class="caption-content">
-									<h3 class="axil-post-title hover-line hover-line"><a
-											href="post-format-standard.html">Smarter Food Choices 101 Tips For Busy
-											Women</a></h3>
-									<div class="caption-meta">
-										By <a href="#">Naseema Al Morad</a>
-									</div>
-								</div>
-								<!-- End of .content-inner -->
-							</div>
-						</div>
-						<!-- End of .content-block -->
-					</div>
-					<!-- End of .col-lg-3 -->
-					<div class="col-lg-3 col-md-4">
-						<div class="content-block m-b-xs-30">
-							<a href="post-format-standard.html">
-								<img src="assets/images/related-post/related-post-4.jpg" alt="abstruct image"
-									class="img-fluid">
-								<div class="grad-overlay"></div>
-							</a>
-							<div class="media-caption">
-								<div class="caption-content">
-									<h3 class="axil-post-title hover-line hover-line"><a
-											href="post-format-standard.html">Deep Fryer Pieces Of Wisdom</a></h3>
-									<div class="caption-meta">
-										By <a href="#">Nayah Tantoh</a>
-									</div>
-								</div>
-								<!-- End of .content-inner -->
-							</div>
-						</div>
-						<!-- End of .content-block -->
-					</div>
-					<!-- End of .col-lg-3 -->
+					{% endfor %}
+					{% else %}
+					<p>No related news available at the moment.</p>
+					{% endif %}
 				</div>
-				<!-- End of .row -->
 			</div>
-			<!-- End of .grid-wrapper -->
 		</div>
-		<!-- End of .container -->
 	</section>
 	<!-- End of .related-post -->
 

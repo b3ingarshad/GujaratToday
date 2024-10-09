@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block start %}
+
+<div class="breadcrumb-wrapper">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Motivation</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="banner banner__default bg-grey-light-three">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-12">
+                <div class="post-title-wrapper">
+                    <h2 class="m-b-xs-0 axil-post-title hover-line">Motivation</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Category-wise news section -->
+<section class="section-gap section-gap-top__with-text trending-stories">
+    <div class="container">
+        <div class="row" id="motivation">
+            <!-- Fetched news items will be inserted here dynamically -->
+        </div>
+    </div>
+</section>
+
+<!-- Script to load news dynamically based on the selected category -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const topMotivation = document.getElementById('motivation');
+
+    // Function to render news articles
+    function renderNews(newsList) {
+        topMotivation.innerHTML = '';  // Clear the container
+        newsList.forEach(article => {
+// Convert article.date to a JavaScript Date object
+            const articleDate = new Date(article.date);
+
+            // Format the date to "M d, Y" (e.g., "Oct 08, 2024")
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            const formattedDate = articleDate.toLocaleDateString('en-US', options);
+            if (article.category === "Motivation") {  // Filter for "Hate Crime" category
+                const articleHTML = `
+                    <div class="col-lg-4">
+                        <div class="axil-img-container m-b-xs-30">
+                            <a href="/news/${article.id}" class="d-block">
+                                <img src="${article.image}" alt="${article.title}" class="w-100">
+                                <div class="grad-overlay"></div>
+                            </a>
+                            <div class="media post-block position-absolute">
+                                <div class="media-body">
+                                    <div class="post-cat-group m-b-xs-10">
+                                        <a href="#" class="post-cat cat-btn " style="background-color: ${article.category_color};">
+                                            ${article.category}
+                                        </a>
+                                    </div>
+                                    <div class="axil-media-bottom">
+                                        <h3 class="axil-post-title hover-line hover-line">
+                                            <a href="/news/${article.id}">${article.title}</a>
+                                        </h3>
+                                        <div class="post-metas">
+                                            <ul class="list-inline">
+                                                <li>By <a href="#" class="post-author">${article.author}</a></li>
+                                                <li><i class="dot">.</i> ${formattedDate}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                topMotivation.innerHTML += articleHTML;
+            }
+        });
+    }
+
+    // Load initial news list
+    const initialNewsList = JSON.parse('{{ news_list_json|escapejs }}');
+    renderNews(initialNewsList);
+
+    // Add event listeners to category links in the navbar
+    document.querySelectorAll('.category-link').forEach(categoryLink => {
+        categoryLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            const categoryId = this.dataset.categoryId;
+
+            // Fetch news for the selected category via AJAX
+            fetch(`?category=${categoryId}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                renderNews(data.news);  // Render the news articles dynamically
+            });
+        });
+    });
+});
+
+</script>
+
+{% endblock %}

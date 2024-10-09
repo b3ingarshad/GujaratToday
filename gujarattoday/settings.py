@@ -26,9 +26,8 @@ SECRET_KEY = 'django-insecure-+7@k4j6r_%50cvyaab*a_140gi=+by=0(8)&h69@yc4t7!frs$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web-production-3308.up.railway.app']
-CSRF_TRUSTED_ORIGINS = ['https://web-production-3308.up.railway.app/']
-SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+ALLOWED_HOSTS = []
+
 
 # Application definition
 
@@ -44,6 +43,18 @@ INSTALLED_APPS = [
     'ckeditor',
 ]
 
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+        'extra_plugins': ','.join([
+            'imageUpload',
+            'mediaEmbed',
+        ]),
+    },
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,7 +64,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'gujarattoday.middleware.AllowIframeMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'gujarattoday.urls'
@@ -123,12 +133,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 X_FRAME_OPTIONS = 'SAMEORIGIN'
@@ -138,3 +142,4 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+handler404 = 'myapp.views.custom_404_view'

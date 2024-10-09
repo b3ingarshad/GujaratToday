@@ -7,7 +7,7 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Top Stories</li>
             </ol>
             <!-- End of .breadcrumb -->
@@ -35,20 +35,26 @@
 
 <section class="section-gap section-gap-top__with-text trending-stories">
     <div class="container">
-        <div class="row" id="topWeekNewContainer">
+        <div class="row" id="topWeekNewPage">
             <!-- Fetched news items will be inserted here dynamically -->
         </div>
     </div>
 </section>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const topStoriesContainer = document.getElementById('topWeekNewContainer');
+        const topStoriesContainer = document.getElementById('topWeekNewPage');
 
         // Parse the JSON object passed from Django
         const newsList = JSON.parse('{{ news_list_json|escapejs }}'); // Use escapejs for safety
 
         topStoriesContainer.innerHTML = ''; // Clear existing content
         newsList.forEach(article => {
+            // Convert article.date to a JavaScript Date object
+            const articleDate = new Date(article.date);
+
+            // Format the date to "M d, Y" (e.g., "Oct 08, 2024")
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            const formattedDate = articleDate.toLocaleDateString('en-US', options);
             const articleHTML = `
                 <div class="col-lg-4">
                     <div class="axil-img-container m-b-xs-30">
@@ -59,7 +65,7 @@
                         <div class="media post-block position-absolute">
                             <div class="media-body">
                                 <div class="post-cat-group m-b-xs-10">
-                                    <a href="#" class="post-cat cat-btn bg-color-purple-two">
+                                    <a href="/${article.category_url}" class="post-cat cat-btn" style="background-color: ${article.category_color}">
                                         ${article.category}
                                     </a>
                                 </div>
@@ -70,7 +76,7 @@
                                     <div class="post-metas">
                                         <ul class="list-inline">
                                             <li>By <a href="#" class="post-author">${article.author}</a></li>
-                                            <li><i class="dot">.</i>${article.date}</li>
+                                           <li><i class="dot">.</i> ${formattedDate}</li>
                                         </ul>
                                     </div>
                                 </div>
