@@ -1,3 +1,37 @@
+const loader = document.getElementById('loader-container');
+
+function showLoader() {
+    loader.style.display = 'flex'; // Use 'flex' to keep the loader centered
+}
+
+function hideLoader() {
+    loader.style.display = 'none';
+}
+
+
+// function show404Page() {
+//     document.getElementById('error-404-content').innerHTML = `
+//         <div class="error-404-banner bg-grey-light-three">
+//             <div class="container">
+//                 <div class="error-404-content text-center">
+//                     <div class="txt-404 tilt-this">404</div>
+//                     <div class="error-inner-content">
+//                         <h1 class="h1 m-b-xs-20 m-b-md-40">
+//                             Sorry, This Page Doesn't Exist.
+//                         </h1>
+//                         <a href="/" class="btn btn-primary">BACK TO HOMEPAGE</a>
+//                     </div>
+//                 </div>
+//                 <!-- End of .error-404-content -->
+//             </div>
+//             <!-- End of .container -->
+//         </div>
+//         <!-- End of .error-404-banner -->
+//     `;
+// }
+
+showLoader();
+
 // Fetch navbar links from the Django API
 fetch('/api/navbar/')
     .then(response => response.json())
@@ -47,7 +81,14 @@ fetch('/api/navbar/')
             moreDropdown.style.display = 'none';
         }
     })
-    .catch(error => console.error('Error fetching navbar links:', error));
+    .catch(error => {
+        console.error('Error fetching navbar links:', error);
+         // Show 404 page on error
+    })
+    .finally(() => {
+        // Delay hiding the loader for 3 seconds
+        setTimeout(hideLoader, 1000);
+    });
 
 
 // Top 10 News API
@@ -68,6 +109,12 @@ function replaceFirstNewsItem(newsContainer, newItemHTML) {
     newsContainer.appendChild(newItem);
 }
 
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options); // Adjust locale if needed
+}
+
 // Fetch top news data from API
 fetch('/api/topnews/')
     .then(response => response.json())
@@ -77,7 +124,7 @@ fetch('/api/topnews/')
 
         data.slice(0, maxTotalNews).forEach((newsItem, index) => {
             const newsHTML = `
-                    <div class="axil-img-container m-b-xs-15 m-b-sm-30">
+                    <div class="axil-img-container m-b-xs-15 m-b-sm-30 ">
                         <a href="#" class="d-block">
                             <img src="${newsItem.image}" alt="${newsItem.title}">
                             <div class="grad-overlay grad-overlay__transparent"></div>
@@ -85,13 +132,20 @@ fetch('/api/topnews/')
                         <div class="media post-block grad-overlay position-absolute">
                             <div class="media-body justify-content-end">
                                 <div class="post-cat-group m-b-xs-10">
-                                    <a href="#" class="post-cat cat-btn btn-mid bg-color-purple-one">${newsItem.category}</a>
+                                    <a href="${newsItem.category_url}" class="post-cat cat-btn btn-mid" style="background-color: ${newsItem.category_color};">${newsItem.category}</a>
                                 </div>
                                 <div class="axil-media-bottom">
                                     <h3 class="axil-post-title hover-line m-b-xs-0">
                                         <a href="/topnews/${newsItem.id}">${newsItem.title}</a>
                                     </h3>
+                                   
                                 </div>
+                                 <div class="post-metas" style="padding: 10px 0;">
+                                    <ul class="list-inline">
+                                        <li>By <a href="#" class="post-author">${newsItem.author}</a></li>
+                                        <li><i class="dot">.</i>${ formatDate(newsItem.date) }</li>  
+                                    </ul>
+                                 </div>
                             </div>
                         </div>
                     </div>`;
@@ -100,19 +154,17 @@ fetch('/api/topnews/')
                 // Add first 4 items to the carousel
                 newsCarousel.innerHTML += `
                         <div class="item">
-                            <div class="axil-img-container video-container__type-2 m-b-xs-15 m-b-sm-30">
+                            <div class="axil-img-container video-container__type-2 m-b-xs-15 m-b-sm-30 ">
                                 <a href="#" class="d-block">
                                     <img src="${newsItem.image}" alt="${newsItem.title}" class="img-fluid">
                                     <div class="grad-overlay grad-overlay__transparent"></div>
-                                    <div class="post-format video-play-btn">
-                                        <i class="fas fa-play"></i>
-                                    </div>
+                                    
                                 </a>
                                 <div class="media post-block position-absolute m-b-xs-30">
                                     <div class="media-body media-body__big">
                                         <div class="axil-media-bottom mt-auto">
                                             <div class="post-cat-group m-b-xs-10">
-                                                <a href="#" class="post-cat cat-btn btn-big bg-color-red-two">
+                                                <a href="${newsItem.category_url}" class="post-cat cat-btn btn-big " style="background-color: ${newsItem.category_color};">
                                                     ${newsItem.category}
                                                 </a>
                                             </div>
@@ -122,9 +174,8 @@ fetch('/api/topnews/')
                                             <div class="post-metas">
                                                 <ul class="list-inline">
                                                     <li>By <a href="#" class="post-author">${newsItem.author}</a></li>
-                                                    <li><i class="dot">.</i>${newsItem.date}</li>
-                                                    <li><a href="#"><i class="feather icon-activity"></i>5k Views</a></li>
-                                                    <li><a href="#"><i class="feather icon-share-2"></i>230 Shares</a></li>
+                                                   <li><i class="dot">.</i> ${ formatDate(newsItem.date) }</li>
+                                        
                                                 </ul>
                                             </div>
                                         </div>
@@ -161,7 +212,14 @@ fetch('/api/topnews/')
             });
         });
     })
-    .catch(error => console.error('Error fetching news:', error));
+    .catch(error => {
+        console.error('Error fetching news links:', error);
+         // Show 404 page on error
+    })
+    .finally(() => {
+        // Delay hiding the loader for 3 seconds
+        setTimeout(hideLoader, 1000);
+    });
 
 
 // Top Stories API
@@ -195,7 +253,7 @@ fetch('/api/news/')
         // HTML for the first large news item
         let firstNewsHTML = `
         <div class="col-lg-8">
-            <div class="axil-img-container m-b-xs-30">
+            <div class="axil-img-container m-b-xs-30 ">
                 <a href="/news/${firstNews.id}" class="d-block">
                     <img src="${firstNews.image}" alt="${firstNews.title}" class="w-100">
                     <div class="grad-overlay"></div>
@@ -203,7 +261,7 @@ fetch('/api/news/')
                 <div class="media post-block position-absolute">
                     <div class="media-body media-body__big">
                         <div class="post-cat-group m-b-xs-10">
-                            <a href="#" class="post-cat cat-btn bg-color-purple-one">
+                            <a href="${firstNews.category_url}" class="post-cat cat-btn " style="background-color: ${firstNews.category_color};">
                                 ${firstNews.category}
                             </a>
                         </div>
@@ -214,7 +272,7 @@ fetch('/api/news/')
                             <div class="post-metas">
                                 <ul class="list-inline">
                                     <li>By <a href="#" class="post-author">${firstNews.author}</a></li>
-                                    <li><i class="dot">.</i>${firstNews.date}</li>
+                                    <li><i class="dot">.</i> ${formatDate(firstNews.date)}</li>
                                     
                                 </ul>
                             </div>
@@ -230,7 +288,7 @@ fetch('/api/news/')
         let secondThirdNewsHTML = `
         <div class="col-lg-4">
             ${secondAndThirdNews.map(newsItem => `
-                <div class="axil-img-container m-b-xs-30">
+                <div class="axil-img-container m-b-xs-30 ">
                     <a href="/news/${newsItem.id}" class="d-block">
                         <img src="${newsItem.image}" alt="${newsItem.title}" class="w-100">
                         <div class="grad-overlay"></div>
@@ -238,7 +296,7 @@ fetch('/api/news/')
                     <div class="media post-block position-absolute">
                         <div class="media-body">
                             <div class="post-cat-group m-b-xs-10">
-                                <a href="#" class="post-cat cat-btn bg-color-purple-two">
+                                <a href="${newsItem.category_url}" class="post-cat cat-btn" style="background-color: ${newsItem.category_color};">
                                     ${newsItem.category}
                                 </a>
                             </div>
@@ -249,7 +307,7 @@ fetch('/api/news/')
                                 <div class="post-metas">
                                     <ul class="list-inline">
                                         <li>By <a href="#" class="post-author">${newsItem.author}</a></li>
-                                        <li><i class="dot">.</i>${newsItem.date}</li>
+                                        <li><i class="dot">.</i>${formatDate(newsItem.date)}</li>
                                        
                                     </ul>
                                 </div>
@@ -283,7 +341,7 @@ fetch('/api/news/')
                             </a>
                             <div class="media-body">
                                 <div class="post-cat-group m-b-xs-10">
-                                    <a href="${article.categoryLink}" class="post-cat cat-btn bg-color-blue-grey-one">
+                                    <a href="${article.category_url}" class="post-cat cat-btn " style="background-color: ${article.category_color};">
                                         ${article.category}
                                     </a>
                                 </div>
@@ -308,40 +366,47 @@ fetch('/api/news/')
             }
         })
     })
-    .catch(error => console.error('Error fetching news:', error));
+    .catch(error => {
+        console.error('Error fetching news links:', error);
+         // Show 404 page on error
+    })
+    .finally(() => {
+        // Delay hiding the loader for 3 seconds
+        setTimeout(hideLoader, 1000);
+    });
 
 
 // Load More News Button 
-document.getElementById('load-more-btn').addEventListener('click', function() {
+document.getElementById('load-more-btn').addEventListener('click', function () {
     const nextPage = this.getAttribute('data-next-page');
-    
+
     fetch(`?page=${nextPage}`, {
         method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest' // Indicate that this is an AJAX request
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        const newsContainer = document.getElementById('popular-news-container');
-        data.news.forEach(item => {
-            console.log(data.news,"data.news");
-            
-            const newsItem = document.createElement('div');
-            newsItem.className = 'col-lg-6 news-item';
-            newsItem.innerHTML = `
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const newsContainer = document.getElementById('popular-news-container');
+            data.news.forEach(item => {
+                console.log(data.news, "data.news");
+
+                const newsItem = document.createElement('div');
+                newsItem.className = 'col-lg-6 news-item';
+                newsItem.innerHTML = `
                 <div class="media post-block m-b-xs-30">
                     <a href="/news/${item.id}/" class="align-self-center">
                         <img class="m-r-xs-30" src="${item.image}" alt="${item.title}">
                     </a>
                     <div class="media-body">
                         <div class="post-cat-group m-b-xs-10">
-                            <a href="" class="post-cat cat-btn bg-color-blue-grey-one">${item.category}</a>
+                            <a href="" class="post-cat cat-btn " style="background-color: ${item.category_color};">${item.category}</a>
                         </div>
                         <h3 class="axil-post-title hover-line hover-line">
                             <a href="/news/${item.id}/">${item.title}</a>
@@ -354,17 +419,24 @@ document.getElementById('load-more-btn').addEventListener('click', function() {
                     </div>
                 </div>
             `;
-            newsContainer.appendChild(newsItem);
-        });
+                newsContainer.appendChild(newsItem);
+            });
 
-        // Update the Load More button
-        if (data.has_next) {
-            this.setAttribute('data-next-page', parseInt(nextPage) + 1);
-        } else {
-            this.remove(); // Remove button if there's no next page
-        }
-    })
-    .catch(error => console.error('Error loading more news:', error));
+            // Update the Load More button
+            if (data.has_next) {
+                this.setAttribute('data-next-page', parseInt(nextPage) + 1);
+            } else {
+                this.remove(); // Remove button if there's no next page
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching news links:', error);
+             // Show 404 page on error
+        })
+        .finally(() => {
+            // Delay hiding the loader for 3 seconds
+            setTimeout(hideLoader, 1000);
+        });
 });
 
 // Top Stories All Page

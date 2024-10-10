@@ -28,7 +28,7 @@
 			NEWS._click();
 			NEWS.menuItemAnim();
 			NEWS.owl();
-			NEWS.counterUp();
+		
 			NEWS.magnificPopup();
 			NEWS.niceScrollInit();
 			NEWS.yScrollInit();
@@ -397,16 +397,7 @@
 			}
 		},
 
-		counterUp: function () {
-			var _counter = $('.counter');
-			if (_counter.length) {
-				_counter.counterUp({
-					delay: 10,
-					time: 1000,
-					triggerOnce: true
-				});
-			}
-		},
+		
 
 		perfectSquare: function () {
 			var _square = $('.perfect-square');
